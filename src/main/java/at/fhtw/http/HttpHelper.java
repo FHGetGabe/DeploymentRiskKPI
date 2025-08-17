@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.Base64;
 
 public class HttpHelper {
@@ -13,18 +12,15 @@ public class HttpHelper {
     private static final HttpClient client = HttpClient.newBuilder()
             .build();
 
-    public static String get(String url) throws IOException, InterruptedException {
-        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+    public static HttpResponse<String> get(String url) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
+                .header("Authorization", getBasicAuthHeader())
+                .header("Accept", "application/json")
                 .GET()
-                .timeout(Duration.ofSeconds(15));
+                .build();
 
-        requestBuilder.header("Authorization", getBasicAuthHeader());
-
-        HttpRequest request = requestBuilder.build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        return response.body();
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private static String getBasicAuthHeader() {
