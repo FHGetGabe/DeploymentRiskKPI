@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Base64;
 
 public class HttpHelper {
 
@@ -13,9 +12,10 @@ public class HttpHelper {
             .build();
 
     public static HttpResponse<String> get(String url) throws IOException, InterruptedException {
+        System.out.println(url);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .header("Authorization", getBasicAuthHeader())
+                .header("Authorization", getToken())
                 .header("Accept", "application/json")
                 .GET()
                 .build();
@@ -23,10 +23,9 @@ public class HttpHelper {
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    private static String getBasicAuthHeader() {
-        String username = CredentialManager.getUsername();
-        String password = CredentialManager.getPassword();
-        String encoded = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
-        return "Basic " + encoded;
+    private static String getToken() {
+        String personalAccessToken = CredentialManager.getPersonalAccessToken(); // Fetch the token securely
+        return "Bearer " + personalAccessToken;
+
     }
 }
