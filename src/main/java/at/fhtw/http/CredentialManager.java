@@ -28,4 +28,9 @@ public class CredentialManager {
     public static String getPassword() {
         return props.getProperty("password");
     }
+
+    public static String getPersonalAccessToken () {
+        return props.getProperty("JiraAPIToken");
+    }
+
 }
