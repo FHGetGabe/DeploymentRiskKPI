@@ -1,4 +1,5 @@
-package at.fhtw.jira.data;
+package at.fhtw.jira.models;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -10,9 +11,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class SearchResult {
-    private Integer startAt;
-    private Integer maxResults;
-    private Integer total;
+@JsonIgnoreProperties (ignoreUnknown = true)
+public class Issue {
+
+  private String expand;
+  private String id;
+  private String self;
+  private String key;
+  private Fields fields;
 }
+

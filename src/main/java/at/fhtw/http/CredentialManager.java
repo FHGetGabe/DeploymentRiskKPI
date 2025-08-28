@@ -5,32 +5,33 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class CredentialManager {
-    private static final Properties props = new Properties();
 
-    static {
-        try (InputStream input = CredentialManager.class.getClassLoader()
-                .getResourceAsStream("config.properties")) {
+  private static final Properties props = new Properties();
 
-            if (input == null) {
-                throw new IOException("config.properties not found in resources");
-            }
+  static {
+    try (InputStream input = CredentialManager.class.getClassLoader()
+                                                    .getResourceAsStream("config.properties")) {
 
-            props.load(input);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load config.properties", e);
-        }
+      if (input == null) {
+        throw new IOException("config.properties not found in resources");
+      }
+
+      props.load(input);
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to load config.properties", e);
     }
+  }
 
-    public static String getUsername() {
-        return props.getProperty("username");
-    }
+  public static String getUsername () {
+    return props.getProperty("username");
+  }
 
-    public static String getPassword() {
-        return props.getProperty("password");
-    }
+  public static String getPassword () {
+    return props.getProperty("password");
+  }
 
-    public static String getPersonalAccessToken () {
-        return props.getProperty("JiraAPIToken");
-    }
+  public static String getPersonalAccessToken () {
+    return props.getProperty("JiraAPIToken");
+  }
 
 }
