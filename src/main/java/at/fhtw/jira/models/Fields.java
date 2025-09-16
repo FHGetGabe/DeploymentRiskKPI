@@ -18,5 +18,7 @@ public class Fields {
   private Double effortEstimationInStoryPoints;
   @JsonProperty ("customfield_16716")
   private Double effortEstimationInPT;
+  @JsonProperty ("customfield_18910")
+  private CustomFieldOption customerAcceptanceRelevant;
 }
 

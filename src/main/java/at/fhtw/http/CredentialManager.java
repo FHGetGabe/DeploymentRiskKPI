@@ -22,16 +22,16 @@ public class CredentialManager {
     }
   }
 
-  public static String getUsername () {
-    return props.getProperty("username");
-  }
-
-  public static String getPassword () {
-    return props.getProperty("password");
-  }
-
-  public static String getPersonalAccessToken () {
+  public static String getJiraAPIToken () {
     return props.getProperty("JiraAPIToken");
+  }
+
+  public static String getDigitalaiToken () {
+    return props.getProperty("DigitalaiToken");
+  }
+
+  public static String getDigitalaiArchiveToken () {
+    return props.getProperty("DigitalaiArchiveToken");
   }
 
 }

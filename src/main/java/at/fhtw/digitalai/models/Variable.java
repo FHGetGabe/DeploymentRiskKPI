@@ -1,18 +1,17 @@
-package at.fhtw.jira.models;
+package at.fhtw.digitalai.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties (ignoreUnknown = true)
-public class ObjectEntry {
-
-  private String objectKey;
-  private String label;
+@ToString
+public class Variable {
+  private String key;
+  private Object value;
 }

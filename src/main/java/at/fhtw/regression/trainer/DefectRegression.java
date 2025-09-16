@@ -33,10 +33,10 @@ public class DefectRegression {
     // LinearSGDTrainer konfigurieren
     LinearSGDTrainer trainer = new LinearSGDTrainer(
         new SquaredLoss(),    // Loss
-        new AdaGrad(0.1),     // Lernrate
-        5000000,                   // Epochen
+        new AdaGrad(0.01),     // Lernrate
+        50000,                   // Epochen
         train.size(),         // MiniBatch = Dataset-Größe
-        43,                  // Seed
+        40,                  // Seed
         new Random(32).nextInt()        // RNG
     );
 

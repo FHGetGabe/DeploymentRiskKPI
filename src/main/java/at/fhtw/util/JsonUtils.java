@@ -24,4 +24,12 @@ public class JsonUtils {
     }
   }
 
+  public static String toString (Object object) {
+    try {
+      return mapper.writeValueAsString(object);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to convert object to JSON string", e);
+    }
+  }
+
 }
