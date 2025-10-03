@@ -10,14 +10,7 @@ import lombok.ToString;
 @Builder
 @ToString
 public class ReleaseStoryValues {
-
-  private double storyPointsTotal;
-  private double storyPointsAverage;
-  private double storyPointsMedian;
-
-  private double ptTotal;
-  private double ptAverage;
-  private double ptMedian;
-
+  private double issueDependencyRatio;
+  private int criticalIssueCount;
   private double numericCustomerAcceptanceRelevant;
 }

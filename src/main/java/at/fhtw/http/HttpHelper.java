@@ -36,7 +36,6 @@ public abstract class HttpHelper {
 
   // Hauptmethode, die URL aufbaut und die Anfrage durchführt
   public static HttpResponse<String> get(String url, Context context) throws IOException, InterruptedException {
-
     HttpRequest request = HttpRequest.newBuilder()
                                      .uri(URI.create(getBaseUrl(context) + url))
                                      .header(getAuthorization(context), getToken(context))
@@ -48,7 +47,6 @@ public abstract class HttpHelper {
   }
 
   public static HttpResponse<String> post(String url, Context context, String body) throws IOException, InterruptedException {
-
     HttpRequest request = HttpRequest.newBuilder()
                                      .uri(URI.create(getBaseUrl(context) + url))
                                      .header(getAuthorization(context), getToken(context))

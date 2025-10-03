@@ -5,19 +5,13 @@ import at.fhtw.digitalai.models.GroupedReleases;
 import at.fhtw.digitalai.models.Release;
 import at.fhtw.digitalai.models.ReleaseCountResponse;
 import at.fhtw.digitalai.models.SearchCriteria;
-import at.fhtw.digitalai.models.SonarStatus;
-import at.fhtw.digitalai.models.Variable;
 import at.fhtw.http.HttpHelper;
 import at.fhtw.util.JsonUtils;
 import at.fhtw.util.RoundUtil;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class Digitalai {
 
@@ -74,66 +68,32 @@ public class Digitalai {
       return null;
     }
 
-    double modifiedImplementation = getNumericMeanOfVariable(releases, "modifiedImplementation");
-    double modifiedConfiguration = getNumericMeanOfVariable(releases, "modifiedConfiguration");
-    double tooLate = getNumericMeanOfVariable(releases, "tooLate");
+    double modifiedImplementation = DigitalaiData.getNumericMeanOfBooleanVariable(releases,
+                                                                                  "modifiedImplementation");
+    double modifiedConfiguration = DigitalaiData.getNumericMeanOfBooleanVariable(releases,
+                                                                                 "modifiedConfiguration");
+    double tooLate = DigitalaiData.getNumericMeanOfBooleanVariable(releases, "tooLate");
+    double numberOfOperators = DigitalaiData.getMeanTrueBooleansForReleases(releases,
+                                                                            List.of("installGRZ",
+                                                                                    "installRIT",
+                                                                                    "installRICS",
+                                                                                    "installRZKtn",
+                                                                                    "installRZVlbg"));
+    double knownRiskIfNotDeployed = DigitalaiData.getNumericMeanOfStringVariable(releases,
+                                                                                 "noDeploymentConsequences");
 
     return ReleaseXLRValues.builder()
                            .sonarStatus(RoundUtil.roundToSixDecimals(
-                               evaluateSonarStatus(releases)))
+                               DigitalaiData.evaluateSonarStatus(releases)))
                            .modifiedImplementation(RoundUtil.roundToSixDecimals(
                                modifiedImplementation))
                            .modifiedConfiguration(RoundUtil.roundToSixDecimals(
                                modifiedConfiguration))
                            .tooLateSoftwareTransfer(RoundUtil.roundToSixDecimals(
                                tooLate))
+                           .numberOfOperators(RoundUtil.roundToSixDecimals(numberOfOperators))
+                           .knownRiskIfNotDeployed(RoundUtil.roundToSixDecimals(
+                               knownRiskIfNotDeployed))
                            .build();
   }
-
-  public static double evaluateSonarStatus (List<Release> releases) {
-    DescriptiveStatistics stats = new DescriptiveStatistics();
-
-    releases.forEach(release -> {
-      SonarStatus status = SonarStatus.findFirstMatchingStatus(release.getTags());
-
-      if (status != null && status.getNumericValue() != null) {
-        stats.addValue(status.getNumericValue());
-      }
-      if (status == null) {
-        stats.addValue(1.0);
-      }
-    });
-
-    return stats.getMean();
-  }
-
-  private static double getNumericMeanOfVariable (List<Release> releases,
-                                                  String variableName) {
-    DescriptiveStatistics stats = new DescriptiveStatistics();
-
-    releases.stream()
-            .map(release -> {
-              return Optional.ofNullable(release.getVariables())
-                             .flatMap(variables -> variables.stream()
-                                                            .filter(variable -> variableName.equals(
-                                                                variable.getKey()))
-                                                            .findFirst())
-                             .map(Variable::getValue)
-                             .map(value -> {
-                               if (value instanceof Boolean) {
-                                 return ((Boolean)value) ? 1.0 : 0.0;
-                               }
-                               return null;
-                             })
-                             .orElseGet(() -> {
-                               System.out.println("Variable mit Key '" + variableName + "' in Release'" + release.getTitle() + "' nicht gefunden.");
-                               return null;
-                             });
-            })
-            .filter(Objects::nonNull)
-            .forEach(stats::addValue);
-
-    return stats.getMean();
-  }
-
 }

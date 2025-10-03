@@ -42,36 +42,19 @@ public class CSVParameter {
 
     System.out.println("Daten wurden erfolgreich in '" + filePath + "' geschrieben.");
   }
-/*
-  // Flache Getter für ReleaseEffortValues Felder
-  public double getStoryPointsTotal() {
-    return releaseStoryValues.getStoryPointsTotal();
-  }
-
-  public double getStoryPointsAverage() {
-    return releaseStoryValues.getStoryPointsAverage();
-  }
-
-  public double getStoryPointsMedian() {
-    return releaseStoryValues.getStoryPointsMedian();
-  }
-
-  public double getPtTotal() {
-    return releaseStoryValues.getPtTotal();
-  }
-
-  public double getPtAverage() {
-    return releaseStoryValues.getPtAverage();
-  }
-
-  public double getPtMedian() {
-    return releaseStoryValues.getPtMedian();
-  }
 
   public double getNumericCustomerAcceptanceRelevant() {
     return releaseStoryValues.getNumericCustomerAcceptanceRelevant();
   }
-*/
+
+  public double getIssueDependencyRatio() {
+    return releaseStoryValues.getIssueDependencyRatio();
+  }
+
+  public int getCriticalIssueCount() {
+    return releaseStoryValues.getCriticalIssueCount();
+  }
+
   public double getSonarStatus() {
     return releaseXLRValues.getSonarStatus();
   }
@@ -87,7 +70,7 @@ public class CSVParameter {
   public double getTooLateSoftwareTransfer() {
     return releaseXLRValues.getTooLateSoftwareTransfer();
   }
-  /*
+
 
   public double getNumberOfOperators() {
     return releaseXLRValues.getNumberOfOperators();
@@ -96,5 +79,4 @@ public class CSVParameter {
   public double getKnownRiskIfNotDeployed() {
     return releaseXLRValues.getKnownRiskIfNotDeployed();
   }
- */
 }

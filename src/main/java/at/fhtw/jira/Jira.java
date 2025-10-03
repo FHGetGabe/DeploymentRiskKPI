@@ -3,8 +3,6 @@ package at.fhtw.jira;
 import at.fhtw.dataCollector.models.ReleaseStoryValues;
 import at.fhtw.http.HttpHelper;
 import at.fhtw.jira.models.AssetsData;
-import at.fhtw.jira.models.CustomFieldOption;
-import at.fhtw.jira.models.Fields;
 import at.fhtw.jira.models.Issue;
 import at.fhtw.jira.models.ObjectEntry;
 import at.fhtw.jira.models.SearchResult;
@@ -15,20 +13,43 @@ import java.net.URLEncoder;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 
 public class Jira {
 
   private static final String SEARCH_ENDPOINT_PAGINATED = "/rest/api/2/search?jql=%s&startAt=%d&maxResults=%d";
-  private static final String ASSETS_SEARCH_ENDPOINT = "/rest/insight/1.0/iql/objects?iql=%s&resultPerPage=100";
+  private static final String ASSETS_SEARCH_ENDPOINT = "/rest/insight/1.0/iql/objects?iql=%s&resultPerPage=300";
 
   public static List<ObjectEntry> getHauptReleasesObjectEntries () throws IOException, InterruptedException {
     String encoded = URLEncoder.encode(
-        "\"Gelöscht\" = False AND \"Name\" ENDSWITH R AND \"Zweiter Einsatztag in Produktion\" < now() AND \"objectType\" = Hauptrelease AND \"Installation KAZ\" > 14.08.2020",
+        "\"Gelöscht\" = False AND \"Name\" ENDSWITH R OR \"Name\" ENDSWITH G AND \"Zweiter Einsatztag in Produktion\" < now() AND \"objectType\" = Hauptrelease AND \"Installation KAZ\" > 14.08.2020",
+        StandardCharsets.UTF_8);
+
+    HttpResponse<String> httpResponse = HttpHelper.get(String.format(
+        ASSETS_SEARCH_ENDPOINT, encoded), HttpHelper.Context.JIRA);
+
+    AssetsData assetsData = JsonUtils.fromJson(httpResponse.body(), AssetsData.class);
+
+    return assetsData.getObjectEntries();
+  }
+
+  public static List<ObjectEntry> getSonderReleasesObjectEntries () throws IOException, InterruptedException {
+    String encoded = URLEncoder.encode(
+        "\"Gelöscht\" = False AND \"Name\" ENDSWITH M OR \"Name\" ENDSWITH G OR \"Name\" ENDSWITH S OR \"Name\" ENDSWITH U OR \"Name\" ENDSWITH P OR \"Name\" ENDSWITH T AND \"Zweiter Einsatztag in Produktion\" < now() AND \"objectType\" = Sonderrelease AND \"Installation KAZ\" > 14.08.2020",
+        StandardCharsets.UTF_8);
+
+    HttpResponse<String> httpResponse = HttpHelper.get(String.format(
+        ASSETS_SEARCH_ENDPOINT, encoded), HttpHelper.Context.JIRA);
+
+    AssetsData assetsData = JsonUtils.fromJson(httpResponse.body(), AssetsData.class);
+
+    return assetsData.getObjectEntries();
+  }
+
+  public static List<ObjectEntry> getHotfixReleasesObjectEntries () throws IOException, InterruptedException {
+    String encoded = URLEncoder.encode(
+        "\"Gelöscht\" = False AND \"Name\" ENDSWITH H AND \"Zweiter Einsatztag in Produktion\" < now() AND \"objectType\" = Hotfix AND \"Erster Einsatztag in Produktion\" > 14.08.2020",
         StandardCharsets.UTF_8);
 
     HttpResponse<String> httpResponse = HttpHelper.get(String.format(
@@ -64,8 +85,6 @@ public class Jira {
     String baseEncodedQuery = URLEncoder.encode(String.format(
         "issuetype = Story AND Target-Release = %s",
         releaseId), StandardCharsets.UTF_8);
-    DescriptiveStatistics storyPointsStats = new DescriptiveStatistics();
-    DescriptiveStatistics ptStats = new DescriptiveStatistics();
     List<Issue> issues = new ArrayList<>();
 
     int startAt = 0;
@@ -88,76 +107,12 @@ public class Jira {
 
     } while (startAt < total);
 
-    issues.stream()
-          .map(Issue::getFields)
-          .forEach(fields -> {
-            processEffort(fields.getEffortEstimationInStoryPoints(), storyPointsStats);
-            processEffort(fields.getEffortEstimationInPT(), ptStats);
-          });
-
-    DescriptiveStatistics storyPointsFilteredStats = filterOutliers(storyPointsStats);
-    DescriptiveStatistics ptFilteredStats = filterOutliers(ptStats);
-
     return ReleaseStoryValues.builder()
-                             .storyPointsTotal(RoundUtil.roundToSixDecimals(storyPointsFilteredStats.getSum()))
-                             .storyPointsAverage(RoundUtil.roundToSixDecimals(
-                                 storyPointsFilteredStats.getMean()))
-                             .storyPointsMedian(RoundUtil.roundToSixDecimals(
-                                 storyPointsFilteredStats.getPercentile(
-                                     50)))
-                             .ptTotal(RoundUtil.roundToSixDecimals(ptFilteredStats.getSum()))
-                             .ptAverage(RoundUtil.roundToSixDecimals(ptFilteredStats.getMean()))
-                             .ptMedian(RoundUtil.roundToSixDecimals(ptFilteredStats.getPercentile(50)))
                              .numericCustomerAcceptanceRelevant(RoundUtil.roundToSixDecimals(
-                                 getNumericCustomerAcceptanceRelevant(
+                                 JiraData.getNumericCustomerAcceptanceRelevant(
                                      issues)))
+                             .issueDependencyRatio(JiraData.getIssueDependencyRatio(issues))
+                             .criticalIssueCount(JiraData.getApplicationMatchSumWithDebug(issues))
                              .build();
-  }
-
-  public static DescriptiveStatistics filterOutliers (DescriptiveStatistics stats) {
-    double upperThreshold = stats.getPercentile(75) + 3 * (stats.getPercentile(75) - stats.getPercentile(
-        25));
-
-    DescriptiveStatistics filteredStats = new DescriptiveStatistics();
-    Arrays.stream(stats.getValues())
-          .filter(value -> value <= upperThreshold)
-          .forEach(filteredStats::addValue);
-
-    return filteredStats;
-  }
-
-  private static void processEffort (Double effort,
-                                     DescriptiveStatistics stats) {
-    if (effort != null && effort > 0) {
-      stats.addValue(effort);
-    }
-  }
-
-  private static double getNumericCustomerAcceptanceRelevant (List<Issue> fieldsList) {
-    DescriptiveStatistics stats = new DescriptiveStatistics();
-
-    fieldsList.stream()
-              .map(issue -> {
-                String value = Optional.ofNullable(issue.getFields())
-                                       .map(Fields::getCustomerAcceptanceRelevant)
-                                       .map(CustomFieldOption::getValue)
-                                       .orElse(null);
-                if (value == null) {
-                  System.out.println("Kein Customer Acceptance Wert im Issue: " + issue.getKey());
-                }
-                return value;
-              })
-              .filter(Objects::nonNull)
-              .mapToDouble(Jira::getCustomerAcceptanceRelevantAsDouble)
-              .forEach(stats::addValue);
-
-    return stats.getMean();
-  }
-
-  public static Double getCustomerAcceptanceRelevantAsDouble (String customerAcceptanceRelevant) {
-    if ("Ja".equalsIgnoreCase(customerAcceptanceRelevant)) {
-      return 1.0;
-    }
-    return 0.0;
   }
 }
