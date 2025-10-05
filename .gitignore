@@ -40,3 +40,4 @@ build/
 /.idea/
 /src/main/resources/old.csv
 /src/main/resources/stories.csv
+/src/main/resources/classification-data.csv
