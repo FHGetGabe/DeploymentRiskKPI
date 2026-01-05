@@ -1,5 +1,6 @@
 package at.fhtw.dataCollector.models;
 
+import at.fhtw.jira.models.DefectStatValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -19,12 +20,24 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CSVParameter {
 
+  private String releaseNumber;
+  private String releaseType;
   private Integer storyCount;
-  private Integer defectCount;
+  private Integer totalDefectCount;
   @JsonIgnore
   private ReleaseStoryValues releaseStoryValues;
   @JsonIgnore
   private ReleaseXLRValues releaseXLRValues;
+  @JsonIgnore
+  private DefectValueSum testDefectValueSum;
+  @JsonIgnore
+  private DefectValueSum pilotDefectValueSum;
+  @JsonIgnore
+  private DefectValueSum kundenabnahmeDefectValueSum;
+  @JsonIgnore
+  private DefectValueSum productionDefectValueSum;
+  @JsonIgnore
+  private DefectStatValue defectStatValue;
   private Integer releaseCount;
 
   public void writeToCSV(String filePath) throws IOException {
@@ -41,6 +54,102 @@ public class CSVParameter {
     }
 
     System.out.println("Daten wurden erfolgreich in '" + filePath + "' geschrieben.");
+  }
+
+  public int getTotalTestDefectSum() {
+    return testDefectValueSum.getTotalSum();
+  }
+
+  public int getTotalTestDefectWeightedSum() {
+    return testDefectValueSum.getWeightedSum();
+  }
+
+  public int getTotalM0TestDefectSum() {
+    return testDefectValueSum.getTotalM0Sum();
+  }
+
+  public int getTotalM1TestDefectSum() {
+    return testDefectValueSum.getTotalM1Sum();
+  }
+
+  public int getTotalM2TestDefectSum() {
+    return testDefectValueSum.getTotalM2Sum();
+  }
+
+  public int getTotalM3TestDefectSum() {
+    return testDefectValueSum.getTotalM3Sum();
+  }
+
+  public int getTotalPilotDefectSum() {
+    return pilotDefectValueSum.getTotalSum();
+  }
+
+  public int getTotalPilotDefectWeightedSum() {
+    return pilotDefectValueSum.getWeightedSum();
+  }
+
+  public int getTotalM0PilotDefectSum() {
+    return pilotDefectValueSum.getTotalM0Sum();
+  }
+
+  public int getTotalM1PilotDefectSum() {
+    return pilotDefectValueSum.getTotalM1Sum();
+  }
+
+  public int getTotalM2PilotDefectSum() {
+    return pilotDefectValueSum.getTotalM2Sum();
+  }
+
+  public int getTotalM3PilotDefectSum() {
+    return pilotDefectValueSum.getTotalM3Sum();
+  }
+
+  public int getTotalKundenabnahmeDefectSum() {
+    return kundenabnahmeDefectValueSum.getTotalSum();
+  }
+
+  public int getTotalKundenabnahmeDefectWeightedSum() {
+    return kundenabnahmeDefectValueSum.getWeightedSum();
+  }
+
+  public int getTotalM0KundenabnahmeDefectSum() {
+    return kundenabnahmeDefectValueSum.getTotalM0Sum();
+  }
+
+  public int getTotalM1KundenabnahmeDefectSum() {
+    return kundenabnahmeDefectValueSum.getTotalM1Sum();
+  }
+
+  public int getTotalM2KundenabnahmeDefectSum() {
+    return kundenabnahmeDefectValueSum.getTotalM2Sum();
+  }
+
+  public int getTotalM3KundenabnahmeDefectSum() {
+    return kundenabnahmeDefectValueSum.getTotalM3Sum();
+  }
+
+  public int getTotalProductionDefectSum() {
+    return productionDefectValueSum.getTotalSum();
+  }
+
+  public int getTotalProductionDefectWeightedSum() {
+    return productionDefectValueSum.getWeightedSum();
+  }
+
+  public int getTotalM0ProductionDefectSum() {
+    return productionDefectValueSum.getTotalM0Sum();
+  }
+
+  public int getTotalM1ProductionDefectSum() {
+    return productionDefectValueSum.getTotalM1Sum();
+  }
+
+  public int getTotalM2ProductionDefectSum() {
+    return productionDefectValueSum.getTotalM2Sum();
+  }
+
+  public int getTotalM3ProductionDefectSum() {
+    return productionDefectValueSum.getTotalM3Sum();
   }
 
   public double getNumericCustomerAcceptanceRelevant() {
@@ -71,7 +180,6 @@ public class CSVParameter {
     return releaseXLRValues.getTooLateSoftwareTransfer();
   }
 
-
   public double getNumberOfOperators() {
     return releaseXLRValues.getNumberOfOperators();
   }
@@ -79,4 +187,13 @@ public class CSVParameter {
   public double getKnownRiskIfNotDeployed() {
     return releaseXLRValues.getKnownRiskIfNotDeployed();
   }
+
+  public double getAverageResolutionTimeInDays() {
+    return defectStatValue.getAverageResolutionTimeInDays();
+  }
+
+  public double getTransformedDaysToDeployment() {
+    return defectStatValue.getTransformedDaysToDeployment();
+  }
+
 }

@@ -14,9 +14,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @JsonIgnoreProperties (ignoreUnknown = true)
 @ToString
-public class ObjectEntry {
-
-  private String objectKey;
-  private String label;
-  private List<Attribute> attributes;
+public class Attribute {
+  private Integer objectTypeAttributeId;
+  private List<ObjectAttributeValue> objectAttributeValues;
 }

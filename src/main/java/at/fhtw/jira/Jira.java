@@ -1,8 +1,11 @@
 package at.fhtw.jira;
 
+import at.fhtw.dataCollector.models.DefectValueSum;
 import at.fhtw.dataCollector.models.ReleaseStoryValues;
 import at.fhtw.http.HttpHelper;
 import at.fhtw.jira.models.AssetsData;
+import at.fhtw.jira.models.DefectStatValue;
+import at.fhtw.jira.models.DefectValues;
 import at.fhtw.jira.models.Issue;
 import at.fhtw.jira.models.ObjectEntry;
 import at.fhtw.jira.models.SearchResult;
@@ -12,8 +15,11 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Jira {
@@ -66,9 +72,20 @@ public class Jira {
     return getIssueCount(encoded);
   }
 
-  public static Integer getDefectCount (String releaseId) throws IOException, InterruptedException {
+  public static Integer getTotalDefectCount (String releaseId) throws IOException, InterruptedException {
     String encoded = URLEncoder.encode(String.format("issuetype = Defect AND Detected-Release = %s",
                                                      releaseId), StandardCharsets.UTF_8);
+    return getIssueCount(encoded);
+  }
+
+  public static Integer getSpecificDefectCount (String releaseId,
+                                                DefectValues criticality,
+                                                DefectValues foundIn) throws IOException, InterruptedException {
+    String encoded = URLEncoder.encode(String.format(
+        "issuetype = Defect AND Detected-Release = %s AND Kritikalität = %s AND \"Gefunden in\" = %s",
+        releaseId,
+        criticality.getValue(),
+        foundIn.getValue()), StandardCharsets.UTF_8);
     return getIssueCount(encoded);
   }
 
@@ -85,6 +102,18 @@ public class Jira {
     String baseEncodedQuery = URLEncoder.encode(String.format(
         "issuetype = Story AND Target-Release = %s",
         releaseId), StandardCharsets.UTF_8);
+    List<Issue> issues = getIssues(baseEncodedQuery);
+
+    return ReleaseStoryValues.builder()
+                             .numericCustomerAcceptanceRelevant(RoundUtil.roundToSixDecimals(
+                                 JiraData.getNumericCustomerAcceptanceRelevant(
+                                     issues)))
+                             .issueDependencyRatio(JiraData.getIssueDependencyRatio(issues))
+                             .criticalIssueCount(JiraData.getApplicationMatchSumWithDebug(issues))
+                             .build();
+  }
+
+  private static List<Issue> getIssues (String baseEncodedQuery) throws IOException, InterruptedException {
     List<Issue> issues = new ArrayList<>();
 
     int startAt = 0;
@@ -106,13 +135,66 @@ public class Jira {
       startAt += maxResults;
 
     } while (startAt < total);
+    return issues;
+  }
 
-    return ReleaseStoryValues.builder()
-                             .numericCustomerAcceptanceRelevant(RoundUtil.roundToSixDecimals(
-                                 JiraData.getNumericCustomerAcceptanceRelevant(
-                                     issues)))
-                             .issueDependencyRatio(JiraData.getIssueDependencyRatio(issues))
-                             .criticalIssueCount(JiraData.getApplicationMatchSumWithDebug(issues))
-                             .build();
+  public static DefectStatValue getDefectStatValues (String releaseId, LocalDate deploymentDate) throws IOException, InterruptedException {
+    String baseEncodedQuery = URLEncoder.encode(String.format(
+        "issuetype = Defect AND Detected-Release = %s AND (\"Gefunden in\" = Test OR \"Gefunden in\" = Kundenabnahme)",
+        releaseId), StandardCharsets.UTF_8);
+    List<Issue> issues = getIssues(baseEncodedQuery);
+
+    return DefectStatValue.builder()
+                          .averageResolutionTimeInDays(JiraData.getAverageResolutionTimeInDays(
+                              issues))
+        .transformedDaysToDeployment(JiraData.getTransformedDaysToDeployment(issues, deploymentDate))
+                          .build();
+  }
+
+  public static DefectValueSum getFoundInDefectCount (String releaseId,
+                                                      DefectValues foundIn) throws IOException, InterruptedException {
+    Map<DefectValues, Integer> foundInMap = new HashMap<>();
+    List<DefectValues> criticalityValues = List.of(DefectValues.MO,
+                                                   DefectValues.M1,
+                                                   DefectValues.M2,
+                                                   DefectValues.M3);
+    for (DefectValues criticality : criticalityValues) {
+      try {
+        int count = getSpecificDefectCount(releaseId, criticality, foundIn);
+        foundInMap.put(criticality, count);
+      } catch (IOException | InterruptedException e) {
+        throw new RuntimeException("Error while fetching defect count for criticality: " + criticality,
+                                   e);
+      }
+    }
+
+    int totalSum = foundInMap.values().stream().mapToInt(Integer::intValue).sum();
+
+    int weightedSum = foundInMap.entrySet().stream()
+                                .mapToInt(entry -> {
+                                  int weight = getCriticalityWeight(entry.getKey());
+                                  return entry.getValue() * weight;
+                                })
+                                .sum();
+
+    return DefectValueSum
+        .builder()
+        .totalSum(totalSum)
+        .weightedSum(weightedSum)
+        .totalM0Sum(foundInMap.get(DefectValues.MO))
+        .totalM1Sum(foundInMap.get(DefectValues.M1))
+        .totalM2Sum(foundInMap.get(DefectValues.M2))
+        .totalM3Sum(foundInMap.get(DefectValues.M3))
+        .build();
+  }
+
+  private static int getCriticalityWeight (DefectValues criticality) {
+    return switch (criticality) {
+      case MO -> 180;
+      case M1 -> 90;
+      case M2 -> 20;
+      case M3 -> 1;
+      default -> 0;
+    };
   }
 }

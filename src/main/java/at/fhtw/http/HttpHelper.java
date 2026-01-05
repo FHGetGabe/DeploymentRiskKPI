@@ -1,6 +1,8 @@
 package at.fhtw.http;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -10,7 +12,15 @@ import java.util.Map;
 
 public abstract class HttpHelper {
 
-  private static final HttpClient client = HttpClient.newBuilder().build();
+  // Proxy-Konfiguration (falls benötigt)
+  private static final boolean USE_PROXY = true; // Proxy-Feature aktivieren/deaktivieren
+  private static final String PROXY_HOST = "webgwooe.rbgooe.at"; // Proxy-Host
+  private static final int PROXY_PORT = 8080; // Proxy-Port
+
+  // HTTP Client - Konfiguration mit optionalem Proxy
+  private static final HttpClient client = HttpClient.newBuilder()
+                                                     .proxy(USE_PROXY ? ProxySelector.of(new InetSocketAddress(PROXY_HOST, PROXY_PORT)) : ProxySelector.getDefault())
+                                                     .build();
 
   public enum Context {
     JIRA, DIGITAL_AI, DIGITAL_AI_ARCHIVE
@@ -34,7 +44,7 @@ public abstract class HttpHelper {
     contextBaseUrls.put(Context.DIGITAL_AI_ARCHIVE, "https://xlrelease-archive-pre2023.rbgooe.at");
   }
 
-  // Hauptmethode, die URL aufbaut und die Anfrage durchführt
+  // GET-Request ausführen
   public static HttpResponse<String> get(String url, Context context) throws IOException, InterruptedException {
     HttpRequest request = HttpRequest.newBuilder()
                                      .uri(URI.create(getBaseUrl(context) + url))
@@ -46,6 +56,7 @@ public abstract class HttpHelper {
     return client.send(request, HttpResponse.BodyHandlers.ofString());
   }
 
+  // POST-Request ausführen
   public static HttpResponse<String> post(String url, Context context, String body) throws IOException, InterruptedException {
     HttpRequest request = HttpRequest.newBuilder()
                                      .uri(URI.create(getBaseUrl(context) + url))
@@ -58,14 +69,17 @@ public abstract class HttpHelper {
     return client.send(request, HttpResponse.BodyHandlers.ofString());
   }
 
+  // Token für spezifischen Kontext abrufen
   private static String getToken(Context context) {
     return contextTokens.getOrDefault(context, "");
   }
 
+  // Authorization-Type für spezifischen Kontext abrufen
   private static String getAuthorization(Context context) {
     return contextAuthorization.getOrDefault(context, "");
   }
 
+  // Basis-URL für spezifischen Kontext abrufen
   private static String getBaseUrl(Context context) {
     return contextBaseUrls.getOrDefault(context, "");
   }

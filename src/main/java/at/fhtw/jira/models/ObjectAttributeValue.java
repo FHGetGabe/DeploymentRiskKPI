@@ -1,7 +1,7 @@
 package at.fhtw.jira.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.util.List;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,9 +14,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @JsonIgnoreProperties (ignoreUnknown = true)
 @ToString
-public class ObjectEntry {
-
-  private String objectKey;
-  private String label;
-  private List<Attribute> attributes;
+public class ObjectAttributeValue {
+  private String value;
 }
