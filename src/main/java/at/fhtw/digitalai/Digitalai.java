@@ -28,7 +28,6 @@ public class Digitalai {
     HttpResponse<String> httpResponse = HttpHelper.post(RELEASE_COUNT_ENDPOINT,
                                                         context,
                                                         JsonUtils.toString(searchCriteria));
-
     ReleaseCountResponse releaseCountResponse = JsonUtils.fromJson(httpResponse.body(),
                                                                    ReleaseCountResponse.class);
 

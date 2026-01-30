@@ -80,12 +80,13 @@ public class Jira {
 
   public static Integer getSpecificDefectCount (String releaseId,
                                                 DefectValues criticality,
-                                                DefectValues foundIn) throws IOException, InterruptedException {
+                                                DefectValues foundIn, String createdQuery) throws IOException, InterruptedException {
     String encoded = URLEncoder.encode(String.format(
-        "issuetype = Defect AND Detected-Release = %s AND Kritikalität = %s AND \"Gefunden in\" = %s",
+        "issuetype = Defect AND Detected-Release = %s AND Kritikalität = %s AND \"Gefunden in\" = %s AND %s",
         releaseId,
         criticality.getValue(),
-        foundIn.getValue()), StandardCharsets.UTF_8);
+        foundIn.getValue(),
+        createdQuery), StandardCharsets.UTF_8);
     return getIssueCount(encoded);
   }
 
@@ -138,7 +139,7 @@ public class Jira {
     return issues;
   }
 
-  public static DefectStatValue getDefectStatValues (String releaseId, LocalDate deploymentDate) throws IOException, InterruptedException {
+  public static DefectStatValue getDefectStatValuesWithKundenabnahme (String releaseId, LocalDate deploymentDate) throws IOException, InterruptedException {
     String baseEncodedQuery = URLEncoder.encode(String.format(
         "issuetype = Defect AND Detected-Release = %s AND (\"Gefunden in\" = Test OR \"Gefunden in\" = Kundenabnahme)",
         releaseId), StandardCharsets.UTF_8);
@@ -146,13 +147,27 @@ public class Jira {
 
     return DefectStatValue.builder()
                           .averageResolutionTimeInDays(JiraData.getAverageResolutionTimeInDays(
-                              issues))
+                              issues, deploymentDate))
         .transformedDaysToDeployment(JiraData.getTransformedDaysToDeployment(issues, deploymentDate))
                           .build();
   }
 
+  public static DefectStatValue getDefectStatValuesWithOutKundenabnahme (String releaseId, LocalDate deploymentDate) throws IOException, InterruptedException {
+    String baseEncodedQuery = URLEncoder.encode(String.format(
+        "issuetype = Defect AND Detected-Release = %s AND (\"Gefunden in\" = Test)",
+        releaseId), StandardCharsets.UTF_8);
+    List<Issue> issues = getIssues(baseEncodedQuery);
+
+    return DefectStatValue.builder()
+                          .averageResolutionTimeInDays(JiraData.getAverageResolutionTimeInDays(
+                              issues, deploymentDate))
+                          .transformedDaysToDeployment(JiraData.getTransformedDaysToDeployment(issues, deploymentDate))
+                          .build();
+  }
+
   public static DefectValueSum getFoundInDefectCount (String releaseId,
-                                                      DefectValues foundIn) throws IOException, InterruptedException {
+                                                      DefectValues foundIn,
+                                                      String createdQuery) throws IOException, InterruptedException {
     Map<DefectValues, Integer> foundInMap = new HashMap<>();
     List<DefectValues> criticalityValues = List.of(DefectValues.MO,
                                                    DefectValues.M1,
@@ -160,7 +175,7 @@ public class Jira {
                                                    DefectValues.M3);
     for (DefectValues criticality : criticalityValues) {
       try {
-        int count = getSpecificDefectCount(releaseId, criticality, foundIn);
+        int count = getSpecificDefectCount(releaseId, criticality, foundIn, createdQuery);
         foundInMap.put(criticality, count);
       } catch (IOException | InterruptedException e) {
         throw new RuntimeException("Error while fetching defect count for criticality: " + criticality,

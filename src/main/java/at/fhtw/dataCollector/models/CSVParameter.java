@@ -37,7 +37,9 @@ public class CSVParameter {
   @JsonIgnore
   private DefectValueSum productionDefectValueSum;
   @JsonIgnore
-  private DefectStatValue defectStatValue;
+  private DefectStatValue defectStatValueKundenabnahme;
+  @JsonIgnore
+  private DefectStatValue defectStatValueTest;
   private Integer releaseCount;
 
   public void writeToCSV(String filePath) throws IOException {
@@ -188,12 +190,20 @@ public class CSVParameter {
     return releaseXLRValues.getKnownRiskIfNotDeployed();
   }
 
-  public double getAverageResolutionTimeInDays() {
-    return defectStatValue.getAverageResolutionTimeInDays();
+  public double getAverageResolutionTimeInDaysKundenabnahme() {
+    return defectStatValueKundenabnahme.getAverageResolutionTimeInDays();
   }
 
-  public double getTransformedDaysToDeployment() {
-    return defectStatValue.getTransformedDaysToDeployment();
+  public double getTransformedDaysToDeploymentKundenabnahme() {
+    return defectStatValueKundenabnahme.getTransformedDaysToDeployment();
+  }
+
+  public double getAverageResolutionTimeInDaysTest() {
+    return defectStatValueTest.getAverageResolutionTimeInDays();
+  }
+
+  public double getTransformedDaysToDeploymentTest() {
+    return defectStatValueTest.getTransformedDaysToDeployment();
   }
 
 }

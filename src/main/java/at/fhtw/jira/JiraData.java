@@ -75,11 +75,12 @@ public class JiraData {
                  .sum();
   }
 
-  public static double getAverageResolutionTimeInDays(List<Issue> issues) {
+  public static double getAverageResolutionTimeInDays(List<Issue> issues, LocalDate deploymentDate) {
     DescriptiveStatistics stats = new DescriptiveStatistics();
     if(issues.isEmpty()) {
       return 0;
     }
+
 
     issues.stream()
           .map(issue -> {
@@ -102,6 +103,15 @@ public class JiraData {
             LocalDate resolutionDate =  OffsetDateTime.parse(resolutionDateTime, customFormatter)
                                                       .toLocalDate();
 
+            if (!created.isBefore(deploymentDate)) {
+              System.out.println("DeploymentDate vor dem CreatedDate im Issue: " + issue.getKey());
+              return null;
+            }
+
+            if (!resolutionDate.isBefore(deploymentDate)) {
+              System.out.println("DeploymentDate vor dem ResolutionDate im Issue: " + issue.getKey());
+              return 999L;
+            }
 
             return ChronoUnit.DAYS.between(created, resolutionDate);
           })
@@ -109,13 +119,16 @@ public class JiraData {
           .mapToLong(Long::longValue)
           .forEach(stats::addValue);
 
+    if (stats.getN() == 0) {
+      return 0.0;
+    }
     return stats.getMean();
   }
 
   public static double getTransformedDaysToDeployment(List<Issue> issues, LocalDate deploymentDate) {
     DescriptiveStatistics stats = new DescriptiveStatistics();
     if(issues.isEmpty()) {
-      return 0;
+      return 1.0;
     }
 
     issues.stream()
@@ -146,8 +159,9 @@ public class JiraData {
           .mapToDouble(Double::doubleValue)
           .forEach(stats::addValue);
 
+    if (stats.getN() == 0) {
+      return 1.0;
+    }
     return stats.getMean();
   }
-
-
 }
