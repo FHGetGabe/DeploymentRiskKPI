@@ -13,4 +13,5 @@ public class ReleaseStoryValues {
   private double issueDependencyRatio;
   private int criticalIssueCount;
   private double numericCustomerAcceptanceRelevant;
+  private int totalCustomerAcceptanceRelevant;
 }

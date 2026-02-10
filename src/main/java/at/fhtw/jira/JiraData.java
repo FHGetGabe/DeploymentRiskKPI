@@ -38,6 +38,27 @@ public class JiraData {
     return stats.getMean();
   }
 
+    public static int getTotalCustomerAcceptanceRelevant (List<Issue> fieldsList) {
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+
+        fieldsList.stream()
+                .map(issue -> {
+                    String value = Optional.ofNullable(issue.getFields())
+                            .map(Fields::getCustomerAcceptanceRelevant)
+                            .map(CustomFieldOption::getValue)
+                            .orElse(null);
+                    if (value == null) {
+                        System.out.println("Kein Customer Acceptance Wert im Issue: " + issue.getKey());
+                    }
+                    return value;
+                })
+                .filter(Objects::nonNull)
+                .mapToDouble(JiraData::getCustomerAcceptanceRelevantAsDouble)
+                .forEach(stats::addValue);
+
+        return (int) stats.getSum();
+    }
+
   public static Double getCustomerAcceptanceRelevantAsDouble (String customerAcceptanceRelevant) {
     if ("Ja".equalsIgnoreCase(customerAcceptanceRelevant)) {
       return 1.0;

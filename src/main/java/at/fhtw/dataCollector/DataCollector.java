@@ -43,16 +43,12 @@ public class DataCollector {
     allReleases.forEach((objectEntries, jiraReleaseType) -> {
       objectEntries.forEach(objectEntry -> {
         try {
-          if(objectEntry.getLabel().equals("250403P")) {
-            i.compareAndSet(0, 1);
-          }
-          if(i.get() == 1) {
-            System.out.println("Processing release " + index.getAndIncrement() + ": " + objectEntry.getLabel());
 
-            LocalDate startProductionDeploymentDate = getStartProductionDeploymentDate(objectEntry,
-                                                                                       jiraReleaseType);
-            getValuesForRelease(objectEntry, jiraReleaseType, startProductionDeploymentDate);
-          }
+          System.out.println("Processing release " + index.getAndIncrement() + ": " + objectEntry.getLabel());
+
+          LocalDate startProductionDeploymentDate = getStartProductionDeploymentDate(objectEntry,
+                                                                                     jiraReleaseType);
+          getValuesForRelease(objectEntry, jiraReleaseType, startProductionDeploymentDate);
 
         } catch (Exception e) {
           throw new RuntimeException(e);
@@ -76,6 +72,7 @@ public class DataCollector {
 
     String createdQueryProd = "created > " + dateString;
     String createdQuery = "created < " + dateString;
+    /*
     DefectValueSum testDefectValueSum = Jira.getFoundInDefectCount(objectEntry.getObjectKey(),
                                                                    DefectValues.Test, createdQuery);
     DefectValueSum pilotDefectValueSum = Jira.getFoundInDefectCount(objectEntry.getObjectKey(),
@@ -85,15 +82,16 @@ public class DataCollector {
     DefectValueSum productionDefectValueSum = Jira.getFoundInDefectCount(objectEntry.getObjectKey(),
                                                                          DefectValues.Produktion, createdQueryProd);
 
+
+
     DefectStatValue defectStatValueKundenabnahme = Jira.getDefectStatValuesWithKundenabnahme(
         objectEntry.getObjectKey(),
         deploymentDate);
 
     DefectStatValue defectStatValueTest = Jira.getDefectStatValuesWithOutKundenabnahme(objectEntry.getObjectKey(),
                                                                                        deploymentDate);
-    System.out.println(defectStatValueKundenabnahme);
-    System.out.println(defectStatValueTest);
 
+     */
     Integer releaseCountDigitalAi = Digitalai.getReleaseCount(objectEntry.getLabel(),
                                                               HttpHelper.Context.DIGITAL_AI);
     Integer releaseCountDigitalAiArchive = Digitalai.getReleaseCount(objectEntry.getLabel(),
@@ -108,7 +106,7 @@ public class DataCollector {
       System.out.println("Skip Release: " + objectEntry.getLabel());
       return;
     }
-
+  /*
     ReleaseXLRValues releaseXLRValues = Digitalai.getReleaseXLRValues(objectEntry.getLabel(),
                                                                       releaseCountDigitalAi,
                                                                       HttpHelper.Context.DIGITAL_AI);
@@ -122,21 +120,15 @@ public class DataCollector {
         releaseCountDigitalAi,
         releaseCountDigitalAiArchive);
 
+
+     */
     CSVParameter csvParameter = CSVParameter.builder()
                                             .releaseStoryValues(releaseStoryValues)
-                                            .releaseXLRValues(totalReleaseXLRValues)
                                             .releaseCount(totalReleaseCount)
                                             .releaseNumber(objectEntry.getLabel())
                                             .releaseType(getActualReleaseType(objectEntry.getLabel()))
                                             .storyCount(storyCount)
                                             .totalDefectCount(totalDefectCount)
-                                            .testDefectValueSum(testDefectValueSum)
-                                            .pilotDefectValueSum(pilotDefectValueSum)
-                                            .kundenabnahmeDefectValueSum(kundenabnahmeDefectValueSum)
-                                            .productionDefectValueSum(productionDefectValueSum)
-                                            .defectStatValueKundenabnahme(
-                                                defectStatValueKundenabnahme)
-                                            .defectStatValueTest(defectStatValueTest)
                                             .build();
     csvParameter.writeToCSV("src/main/resources/stories.csv");
   }
