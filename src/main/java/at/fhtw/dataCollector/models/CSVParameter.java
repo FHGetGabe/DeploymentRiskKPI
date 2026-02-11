@@ -58,152 +58,158 @@ public class CSVParameter {
     System.out.println("Daten wurden erfolgreich in '" + filePath + "' geschrieben.");
   }
 
-  public int getTotalTestDefectSum() {
-    return testDefectValueSum.getTotalSum();
+
+
+  public Integer getTotalTestDefectSum() {
+    return testDefectValueSum != null ? testDefectValueSum.getTotalSum() : null;
   }
 
-  public int getTotalTestDefectWeightedSum() {
-    return testDefectValueSum.getWeightedSum();
+  public Integer getTotalTestDefectWeightedSum() {
+    return testDefectValueSum != null ? testDefectValueSum.getWeightedSum() : null;
   }
 
-  public int getTotalM0TestDefectSum() {
-    return testDefectValueSum.getTotalM0Sum();
+  public Integer getTotalM0TestDefectSum() {
+    return testDefectValueSum != null ? testDefectValueSum.getTotalM0Sum() : null;
   }
 
-  public int getTotalM1TestDefectSum() {
-    return testDefectValueSum.getTotalM1Sum();
+  public Integer getTotalM1TestDefectSum() {
+    return testDefectValueSum != null ? testDefectValueSum.getTotalM1Sum() : null;
   }
 
-  public int getTotalM2TestDefectSum() {
-    return testDefectValueSum.getTotalM2Sum();
+  public Integer getTotalM2TestDefectSum() {
+    return testDefectValueSum != null ? testDefectValueSum.getTotalM2Sum() : null;
   }
 
-  public int getTotalM3TestDefectSum() {
-    return testDefectValueSum.getTotalM3Sum();
+  public Integer getTotalM3TestDefectSum() {
+    return testDefectValueSum != null ? testDefectValueSum.getTotalM3Sum() : null;
   }
 
-  public int getTotalPilotDefectSum() {
-    return pilotDefectValueSum.getTotalSum();
+  public Integer getTotalPilotDefectSum() {
+    return pilotDefectValueSum != null ? pilotDefectValueSum.getTotalSum() : null;
   }
 
-  public int getTotalPilotDefectWeightedSum() {
-    return pilotDefectValueSum.getWeightedSum();
+  public Integer getTotalPilotDefectWeightedSum() {
+    return pilotDefectValueSum != null ? pilotDefectValueSum.getWeightedSum() : null;
   }
 
-  public int getTotalM0PilotDefectSum() {
-    return pilotDefectValueSum.getTotalM0Sum();
+  public Integer getTotalM0PilotDefectSum() {
+    return pilotDefectValueSum != null ? pilotDefectValueSum.getTotalM0Sum() : null;
   }
 
-  public int getTotalM1PilotDefectSum() {
-    return pilotDefectValueSum.getTotalM1Sum();
+  public Integer getTotalM1PilotDefectSum() {
+    return pilotDefectValueSum != null ? pilotDefectValueSum.getTotalM1Sum() : null;
   }
 
-  public int getTotalM2PilotDefectSum() {
-    return pilotDefectValueSum.getTotalM2Sum();
+  public Integer getTotalM2PilotDefectSum() {
+    return pilotDefectValueSum != null ? pilotDefectValueSum.getTotalM2Sum() : null;
   }
 
-  public int getTotalM3PilotDefectSum() {
-    return pilotDefectValueSum.getTotalM3Sum();
+  public Integer getTotalM3PilotDefectSum() {
+    return pilotDefectValueSum != null ? pilotDefectValueSum.getTotalM3Sum() : null;
   }
 
-  public int getTotalKundenabnahmeDefectSum() {
-    return kundenabnahmeDefectValueSum.getTotalSum();
+  public Integer getTotalKundenabnahmeDefectSum() {
+    return kundenabnahmeDefectValueSum != null ? kundenabnahmeDefectValueSum.getTotalSum() : null;
   }
 
-  public int getTotalKundenabnahmeDefectWeightedSum() {
-    return kundenabnahmeDefectValueSum.getWeightedSum();
+  public Integer getTotalKundenabnahmeDefectWeightedSum() {
+    return kundenabnahmeDefectValueSum != null ? kundenabnahmeDefectValueSum.getWeightedSum() : null;
   }
 
-  public int getTotalM0KundenabnahmeDefectSum() {
-    return kundenabnahmeDefectValueSum.getTotalM0Sum();
+  public Integer getTotalM0KundenabnahmeDefectSum() {
+    return kundenabnahmeDefectValueSum != null ? kundenabnahmeDefectValueSum.getTotalM0Sum() : null;
   }
 
-  public int getTotalM1KundenabnahmeDefectSum() {
-    return kundenabnahmeDefectValueSum.getTotalM1Sum();
+  public Integer getTotalM1KundenabnahmeDefectSum() {
+    return kundenabnahmeDefectValueSum != null ? kundenabnahmeDefectValueSum.getTotalM1Sum() : null;
   }
 
-  public int getTotalM2KundenabnahmeDefectSum() {
-    return kundenabnahmeDefectValueSum.getTotalM2Sum();
+  public Integer getTotalM2KundenabnahmeDefectSum() {
+    return kundenabnahmeDefectValueSum != null ? kundenabnahmeDefectValueSum.getTotalM2Sum() : null;
   }
 
-  public int getTotalM3KundenabnahmeDefectSum() {
-    return kundenabnahmeDefectValueSum.getTotalM3Sum();
+  public Integer getTotalM3KundenabnahmeDefectSum() {
+    return kundenabnahmeDefectValueSum != null ? kundenabnahmeDefectValueSum.getTotalM3Sum() : null;
   }
 
-  public int getTotalProductionDefectSum() {
-    return productionDefectValueSum.getTotalSum();
+  public Integer getTotalProductionDefectSum() {
+    return productionDefectValueSum != null ? productionDefectValueSum.getTotalSum() : null;
   }
 
-  public int getTotalProductionDefectWeightedSum() {
-    return productionDefectValueSum.getWeightedSum();
+  public Integer getTotalProductionDefectWeightedSum() {
+    return productionDefectValueSum != null ? productionDefectValueSum.getWeightedSum() : null;
   }
 
-  public int getTotalM0ProductionDefectSum() {
-    return productionDefectValueSum.getTotalM0Sum();
+  public Integer getTotalM0ProductionDefectSum() {
+    return productionDefectValueSum != null ? productionDefectValueSum.getTotalM0Sum() : null;
   }
 
-  public int getTotalM1ProductionDefectSum() {
-    return productionDefectValueSum.getTotalM1Sum();
+  public Integer getTotalM1ProductionDefectSum() {
+    return productionDefectValueSum != null ? productionDefectValueSum.getTotalM1Sum() : null;
   }
 
-  public int getTotalM2ProductionDefectSum() {
-    return productionDefectValueSum.getTotalM2Sum();
+  public Integer getTotalM2ProductionDefectSum() {
+    return productionDefectValueSum != null ? productionDefectValueSum.getTotalM2Sum() : null;
   }
 
-  public int getTotalM3ProductionDefectSum() {
-    return productionDefectValueSum.getTotalM3Sum();
+  public Integer getTotalM3ProductionDefectSum() {
+    return productionDefectValueSum != null ? productionDefectValueSum.getTotalM3Sum() : null;
   }
 
-  public double getNumericCustomerAcceptanceRelevant() {
-    return releaseStoryValues.getNumericCustomerAcceptanceRelevant();
+  public Double getNumericCustomerAcceptanceRelevant() {
+    return releaseStoryValues != null ? releaseStoryValues.getNumericCustomerAcceptanceRelevant() : null;
   }
 
-  public double getIssueDependencyRatio() {
-    return releaseStoryValues.getIssueDependencyRatio();
+  public Double getIssueDependencyRatio() {
+    return releaseStoryValues != null ? releaseStoryValues.getIssueDependencyRatio() : null;
   }
 
-  public int getCriticalIssueCount() {
-    return releaseStoryValues.getCriticalIssueCount();
+  public Integer getCriticalIssueCount() {
+    return releaseStoryValues != null ? releaseStoryValues.getCriticalIssueCount() : null;
   }
 
-  public double getSonarStatus() {
-    return releaseXLRValues.getSonarStatus();
+  public Double getSonarStatus() {
+    return releaseXLRValues != null ? releaseXLRValues.getSonarStatus() : null;
   }
 
-  public double getModifiedImplementation() {
-    return releaseXLRValues.getModifiedImplementation();
+  public Double getModifiedImplementation() {
+    return releaseXLRValues != null ? releaseXLRValues.getModifiedImplementation() : null;
   }
 
-  public double getModifiedConfiguration() {
-    return releaseXLRValues.getModifiedConfiguration();
+  public Double getModifiedConfiguration() {
+    return releaseXLRValues != null ? releaseXLRValues.getModifiedConfiguration() : null;
   }
 
-  public double getTooLateSoftwareTransfer() {
-    return releaseXLRValues.getTooLateSoftwareTransfer();
+  public Double getTooLateSoftwareTransfer() {
+    return releaseXLRValues != null ? releaseXLRValues.getTooLateSoftwareTransfer() : null;
   }
 
-  public double getNumberOfOperators() {
-    return releaseXLRValues.getNumberOfOperators();
+  public Double getNumberOfOperators() {
+    return releaseXLRValues != null ? releaseXLRValues.getNumberOfOperators() : null;
   }
 
-  public double getKnownRiskIfNotDeployed() {
-    return releaseXLRValues.getKnownRiskIfNotDeployed();
+  public Double getKnownRiskIfNotDeployed() {
+    return releaseXLRValues != null ? releaseXLRValues.getKnownRiskIfNotDeployed() : null;
   }
 
-  public double getAverageResolutionTimeInDaysKundenabnahme() {
-    return defectStatValueKundenabnahme.getAverageResolutionTimeInDays();
+  public Double getAverageResolutionTimeInDaysKundenabnahme() {
+    return defectStatValueKundenabnahme != null ? defectStatValueKundenabnahme.getAverageResolutionTimeInDays() : null;
   }
 
-  public double getTransformedDaysToDeploymentKundenabnahme() {
-    return defectStatValueKundenabnahme.getTransformedDaysToDeployment();
+  public Double getTransformedDaysToDeploymentKundenabnahme() {
+    return defectStatValueKundenabnahme != null ? defectStatValueKundenabnahme.getTransformedDaysToDeployment() : null;
   }
 
-  public double getAverageResolutionTimeInDaysTest() {
-    return defectStatValueTest.getAverageResolutionTimeInDays();
+  public Double getAverageResolutionTimeInDaysTest() {
+    return defectStatValueTest != null ? defectStatValueTest.getAverageResolutionTimeInDays() : null;
   }
 
-  public double getTransformedDaysToDeploymentTest() {
-    return defectStatValueTest.getTransformedDaysToDeployment();
+  public Double getTransformedDaysToDeploymentTest() {
+    return defectStatValueTest != null ? defectStatValueTest.getTransformedDaysToDeployment() : null;
+  }
+
+  public Integer getTotalCustomerAcceptanceRelevant() {
+    return releaseStoryValues != null ? releaseStoryValues.getTotalCustomerAcceptanceRelevant() : null;
   }
 
 }

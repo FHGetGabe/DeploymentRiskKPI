@@ -95,6 +95,7 @@ public class Jira {
         return searchResult.getTotal();
     }
 
+
     public static ReleaseStoryValues getReleaseStoryValues(String releaseId) throws IOException, InterruptedException {
         String baseEncodedQuery = URLEncoder.encode(String.format(
                 "issuetype = Story AND Target-Release = %s",
