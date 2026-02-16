@@ -109,6 +109,7 @@ public class Jira {
                              .numericCustomerAcceptanceRelevant(RoundUtil.roundToSixDecimals(
                                  JiraData.getNumericCustomerAcceptanceRelevant(
                                      issues)))
+            .totalCustomerAcceptanceRelevant(JiraData.getTotalCustomerAcceptanceRelevant(issues))
                              .issueDependencyRatio(JiraData.getIssueDependencyRatio(issues))
                              .criticalIssueCount(JiraData.getApplicationMatchSumWithDebug(issues))
                              .build();

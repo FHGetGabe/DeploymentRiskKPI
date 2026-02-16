@@ -170,6 +170,10 @@ public class CSVParameter {
     return releaseXLRValues.getSonarStatus();
   }
 
+  public int getTotalCustomerAcceptanceRelevant() {
+    return releaseStoryValues.getTotalCustomerAcceptanceRelevant();
+  }
+
   public double getModifiedImplementation() {
     return releaseXLRValues.getModifiedImplementation();
   }
