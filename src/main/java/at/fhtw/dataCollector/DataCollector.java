@@ -28,16 +28,19 @@ public class DataCollector {
         List<ObjectEntry> hauptReleasesObjectEntries = Jira.getHauptReleasesObjectEntries();
         List<ObjectEntry> sonderReleasesObjectEntries = Jira.getSonderReleasesObjectEntries();
         List<ObjectEntry> hotfixReleasesObjectEntries = Jira.getHotfixReleasesObjectEntries();
+        List<ObjectEntry> geosReleasesObjectEntries = Jira.getGeosReleasesObjectEntries();
 
         Map<List<ObjectEntry>, String> allReleases = new HashMap<>();
         allReleases.put(hauptReleasesObjectEntries, "Hauptreleases");
         allReleases.put(sonderReleasesObjectEntries, "Sonderreleases");
         allReleases.put(hotfixReleasesObjectEntries, "Hotfixreleases");
+        allReleases.put(geosReleasesObjectEntries, "Geosreleases");
 
         AtomicInteger index = new AtomicInteger(1);
         System.out.println("Found " + hauptReleasesObjectEntries.size() + " Hauptreleases.");
         System.out.println("Found " + sonderReleasesObjectEntries.size() + " Sonderreleases.");
         System.out.println("Found " + hotfixReleasesObjectEntries.size() + " Hotfixreleases.");
+        System.out.println("Found " + geosReleasesObjectEntries.size() + " Geosreleases.");
         System.out.println(hauptReleasesObjectEntries);
         allReleases.forEach((objectEntries, jiraReleaseType) -> {
             objectEntries.forEach(objectEntry -> {
@@ -166,6 +169,7 @@ public class DataCollector {
             case "Hauptreleases" -> 851;
             case "Sonderreleases" -> 867;
             case "Hotfixreleases" -> 877;
+            case "Geosreleases" -> 1000166;
             default -> throw new IllegalArgumentException("Unknown release type: " + releaseType);
         };
     }

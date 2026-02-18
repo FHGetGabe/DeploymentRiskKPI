@@ -40,6 +40,19 @@ public class Jira {
     return assetsData.getObjectEntries();
   }
 
+  public static List<ObjectEntry> getGeosReleasesObjectEntries () throws IOException, InterruptedException {
+    String encoded = URLEncoder.encode(
+        "\"Gelöscht\" = False AND \"Name\" ENDSWITH G AND \"Zweiter Einsatztag in Produktion\" < now() AND \"objectType\" = \"GEOS-Release\" AND \"Installation KAZ\" > 14.08.2020",
+        StandardCharsets.UTF_8);
+
+    HttpResponse<String> httpResponse = HttpHelper.get(String.format(
+        ASSETS_SEARCH_ENDPOINT, encoded), HttpHelper.Context.JIRA);
+
+    AssetsData assetsData = JsonUtils.fromJson(httpResponse.body(), AssetsData.class);
+
+    return assetsData.getObjectEntries();
+  }
+
   public static List<ObjectEntry> getSonderReleasesObjectEntries () throws IOException, InterruptedException {
     String encoded = URLEncoder.encode(
         "\"Gelöscht\" = False AND \"Name\" ENDSWITH M OR \"Name\" ENDSWITH G OR \"Name\" ENDSWITH S OR \"Name\" ENDSWITH U OR \"Name\" ENDSWITH P OR \"Name\" ENDSWITH T AND \"Zweiter Einsatztag in Produktion\" < now() AND \"objectType\" = Sonderrelease AND \"Installation KAZ\" > 14.08.2020",
